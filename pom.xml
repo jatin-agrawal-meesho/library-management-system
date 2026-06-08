@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- The POM format version. Always 4.0.0 for modern Maven. -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      INHERITANCE: we inherit from Spring Boot's "starter parent" POM.
+      It gives us:
+        - A curated list of dependency versions (a "BOM"), so we omit <version>
+          on Spring-managed dependencies below and never get version conflicts.
+        - Sensible defaults for build plugins (compiler, packaging, etc.).
+      The Spring Boot VERSION is declared here, in exactly one place.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.5</version>
+        <relativePath/> <!-- empty = fetch the parent from the Maven repository, not a local folder -->
+    </parent>
+
+    <!-- OUR project's own coordinates (who : what : which). -->
+    <groupId>com.meesho</groupId>
+    <artifactId>library-management</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>library-management</name>
+    <description>Library Management System - a learning project</description>
+
+    <properties>
+        <!-- Compile to Java 21 bytecode. The parent reads this property. -->
+        <java.version>21</java.version>
+    </properties>
+
+    <dependencies>
+        <!--
+          The web starter: pulls in Spring MVC, an embedded Tomcat server, and
+          Jackson (JSON). This single line is what makes our app a runnable web app.
+          No <version> needed - the parent BOM decides the right one.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+          Spring Data JPA starter. Bundles, version-matched:
+            - the JPA API (jakarta.persistence.* annotations like @Entity, @Id),
+            - Hibernate (the JPA implementation: maps objects <-> SQL),
+            - HikariCP (the JDBC connection pool),
+            - Spring Data JPA (generates repository implementations at runtime).
+          Its presence on the classpath makes Spring Boot auto-configure a DataSource
+          and an EntityManagerFactory from the spring.datasource.* / spring.jpa.* properties.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!--
+          The PostgreSQL JDBC driver: the concrete code that speaks Postgres's
+          wire protocol over a TCP socket. scope=runtime because our code never
+          references it directly (we only use JPA/Hibernate APIs) - it just needs
+          to be present on the classpath when the app runs.
+        -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+          Spring Data Redis starter. Bundles the Lettuce Redis client and
+          RedisTemplate (the object we use to GET/SET cache entries). Its presence
+          makes Spring Boot auto-configure a RedisConnectionFactory from the
+          spring.data.redis.* properties.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!--
+          Testing starter: JUnit 5, Spring's test support, Mockito, etc.
+          scope=test means these are available ONLY when compiling/running tests,
+          and are never bundled into the shipped application.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+              The Spring Boot Maven plugin. It enables:
+                - `mvn spring-boot:run`  (run the app straight from source)
+                - building an executable "fat jar" that contains our code, all
+                  dependencies, AND the embedded Tomcat, runnable via `java -jar`.
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

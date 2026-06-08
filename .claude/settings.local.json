@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn -version)",
+      "Bash(java -version)",
+      "Bash(javac -version)",
+      "Bash(export JAVA_HOME=\"/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home\")",
+      "Bash(mvn -f /Users/jatin.agrawal/Desktop/Library-Management/pom.xml -q wrapper:wrapper)",
+      "Bash(mvn -f /Users/jatin.agrawal/Desktop/Library-Management/pom.xml clean package)"
+    ]
+  }
+}

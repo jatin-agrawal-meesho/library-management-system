@@ -1,0 +1,38 @@
+# ---------------------------------------------------------------------------
+# Local infrastructure for the Library Management System.
+#
+# This file is NOT part of the Java app. It tells Docker to run two servers
+# the app connects to as a client:
+#   - PostgreSQL : the relational database (durable storage)   -> port 5432
+#   - Redis      : the in-memory cache                          -> port 6379
+#
+# Start both:   docker compose up -d
+# Stop both:    docker compose down
+# Stop + wipe:  docker compose down -v   (also deletes the Postgres data volume)
+#
+# The credentials below MUST match src/main/resources/application.properties.
+# ---------------------------------------------------------------------------
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: library-postgres
+    environment:
+      POSTGRES_DB: library         # a database named "library" is created on first boot
+      POSTGRES_USER: library       # login role
+      POSTGRES_PASSWORD: library   # password for that role
+    ports:
+      - "5432:5432"                # hostPort:containerPort -> reachable at localhost:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # persist table data across container restarts
+
+  redis:
+    image: redis:7
+    container_name: library-redis
+    ports:
+      - "6379:6379"                # reachable at localhost:6379
+    # No volume on purpose: a cache is meant to be disposable. If Redis restarts
+    # and loses everything, the app simply repopulates it from PostgreSQL.
+
+volumes:
+  pgdata:                          # named volume managed by Docker; survives `down`, removed by `down -v`
