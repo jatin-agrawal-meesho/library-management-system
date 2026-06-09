@@ -22,15 +22,42 @@ database, with **Redis caching** layered in front of reads so you can clearly ob
 
 ## 🧰 Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Language | Java 21 (LTS) |
-| Framework | Spring Boot 3.4.5 (Spring MVC) |
-| Persistence | Spring Data JPA · Hibernate |
-| Database | PostgreSQL 16 |
-| Cache | Redis 7 |
-| Build | Maven (via the Maven Wrapper `./mvnw`) |
-| Infra | Docker Compose |
+**One-line summary:** a **Java 21 + Spring Boot 3** REST API using **Spring Data JPA/Hibernate** over
+**PostgreSQL**, with **Redis** caching, built with **Maven** and run on **Docker**.
+
+### Core application stack
+| Tech | Version | Role |
+|------|---------|------|
+| **Java** | 21 (LTS) | Language |
+| **Spring Boot** | 3.4.5 | Application framework (auto-config, IoC container, embedded server) |
+| **Spring Web (Spring MVC)** | via starter | REST controllers, routing, `DispatcherServlet` |
+| **Spring Data JPA** | via starter | Repository abstraction (auto-generated CRUD) |
+| **JPA (Jakarta Persistence API)** | 3.x | The persistence *specification* (`@Entity`, `@Id`, …) |
+| **Hibernate** | bundled by JPA starter | JPA *implementation* — object ↔ SQL (ORM) |
+| **Spring Data Redis** | via starter | `RedisTemplate` + cache integration |
+
+### Data stores
+| Tech | Version | Role |
+|------|---------|------|
+| **PostgreSQL** | 16 | Relational database — source of truth (durable) |
+| **Redis** | 7 | In-memory cache for `GET /books/{id}` |
+
+### Supporting libraries (pulled in by the starters)
+- **Apache Tomcat** — embedded web server (port 8080)
+- **HikariCP** — JDBC connection pool
+- **PostgreSQL JDBC Driver** — talks to Postgres over the wire
+- **Lettuce** — the Redis client under `RedisTemplate`
+- **Jackson** — JSON serialization (HTTP bodies *and* the Redis cache values)
+- **SLF4J + Logback** — logging (the `CACHE HIT/MISS` lines)
+
+### Build, tooling & infrastructure
+- **Maven** — build tool + dependency management
+- **Maven Wrapper (`./mvnw`)** — runs the pinned Maven version, no global install
+- **Docker + Docker Compose** — run PostgreSQL + Redis as containers
+- **Git / GitHub** — version control + hosting
+
+### Present but not yet used
+- **JUnit 5, Spring Boot Test, Mockito** — bundled via `spring-boot-starter-test`; no tests written yet
 
 ---
 
